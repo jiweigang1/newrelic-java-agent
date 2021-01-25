@@ -1,3 +1,4 @@
+// 获取 pluginManagement
 pluginManagement {
     repositories {
         mavenLocal()
@@ -31,17 +32,21 @@ include 'functional_test:weave_test'
 include 'functional_test:weave_test_impl'
 
 // JDK 9+ module system tests
+// JDK 兼容（高版本兼容低版本）9 执行 jdk9测试
 if (JavaVersion.current().isJava9Compatible()) {
     include 'module_test_9'
 }
+// JDK 兼容（高版本兼容低版本）10 执行 jdk10测试
 if (JavaVersion.current().isJava10Compatible()) {
     include 'module_test_10'
 }
+// JDK 兼容（高版本兼容低版本）11 执行 jdk11 测试
 if (JavaVersion.current().isJava11Compatible()) {
     include 'module_test_11'
 }
 
 // Weaver Instrumentation
+// 添加 Instrumentation 以及其子 Project 
 include 'instrumentation:anorm-2.0'
 include 'instrumentation:anorm-2.3'
 include 'instrumentation:anorm-2.4'
