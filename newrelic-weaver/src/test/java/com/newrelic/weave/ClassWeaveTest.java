@@ -25,6 +25,16 @@ import static org.junit.Assert.assertNull;
  */
 public class ClassWeaveTest {
 
+    public static void main(String[] args){
+        try {
+            beforeClass();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        new ClassWeaveTest().testVoidMethod();
+    }
+
     @BeforeClass
     public static void beforeClass() throws IOException {
         ClassWeave weave = WeaveTestUtils.weaveAndAddToContextClassloader(
@@ -297,6 +307,7 @@ public class ClassWeaveTest {
 
         public void voidMethod() {
             Weaver.callOriginal();
+            System.out.println("被修改了");
             myField += 1000;
         }
 

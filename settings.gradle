@@ -22,10 +22,13 @@ include 'test-annotations'
 include 'instrumentation-build'
 include 'instrumentation-test'
 
+
 // Weaver plugins
 include 'newrelic-weaver-scala-api'
 include 'newrelic-weaver-scala'
-
+//只有正式发布的时候才进行编译
+if(product_mode.toBoolean()){
+    println(product_mode + 'aaaaaaaaaaaaaaaaaaaaaclear');
 // Tests
 include 'functional_test'
 include 'functional_test:weave_test'
@@ -271,3 +274,5 @@ include 'instrumentation:vertx-core-3.4.1'
 include 'instrumentation:vertx-core-3.6.0'
 include 'instrumentation:vertx-core-3.8.0'
 include 'instrumentation:vertx-core-3.9.0'
+
+}
