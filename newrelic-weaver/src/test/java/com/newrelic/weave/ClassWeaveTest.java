@@ -310,7 +310,7 @@ public class ClassWeaveTest {
             System.out.println("被修改了");
             myField += 1000;
         }
-
+        /* 
         // different return values
         public int retIntMethod() {
             return 1000 + (Integer) Weaver.callOriginal();
@@ -435,5 +435,6 @@ public class ClassWeaveTest {
         public void replaceClassReference() {
             MyWeave.class.cast(this).sharedField = null;
         }
+        */
     }
 }
