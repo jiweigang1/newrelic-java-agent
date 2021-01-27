@@ -46,12 +46,13 @@ public class MethodProcessors {
     }
 
     /**
+     * 对方法进行串联 
      * Inline all of the specified method calls in the subject method.
      *
      * @param inlineOwnerClassName owner class of the methods to inline
-     * @param inlineMethods methods to inline
+     * @param inlineMethods methods to inline  原始的方法
      * @param subjectOwnerClassName owner class of the subject method that will have calls inlined in
-     * @param subjectMethod subject method to inline calls into
+     * @param subjectMethod subject method to inline calls into  是嵌码的模板类
      * @return new subject method with all specified methods inlined
      */
     public static MethodNode inlineMethods(final String inlineOwnerClassName, final Iterable<MethodNode> inlineMethods,

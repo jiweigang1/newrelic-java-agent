@@ -367,6 +367,7 @@ public class WeaveTestUtils {
     }
 
     /**
+     * 对 originalName class 进行嵌码，同时使用 context classloader进行加载，最终用了 system classloader 加载转换后的类
      * Weaves the original class with the weave class, adds the result to the system classloader.
      *
      * @param originalName original Java classname, e.g. "java.lang.Object"

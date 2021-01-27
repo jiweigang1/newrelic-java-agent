@@ -25,7 +25,9 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+/**
+ * 方法串联适配器
+ */
 public abstract class MethodCallInlinerAdapter extends LocalVariablesSorter {
     /**
      * try/catch blocks which originated from the inlined method.
@@ -92,7 +94,11 @@ public abstract class MethodCallInlinerAdapter extends LocalVariablesSorter {
         }
         return mv;
     }
-
+    /**
+     *  执行嵌入
+     *  读取模板方法，
+     *  如果有 callOrgin 匹配地方方法调用，读取真实的方法进行嵌入
+     */
     @Override
     public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
         InlinedMethod inliner = getInliner(owner, name, desc);
@@ -162,13 +168,16 @@ public abstract class MethodCallInlinerAdapter extends LocalVariablesSorter {
             this.desc = desc;
             this.caller = caller;
         }
-
+        /**
+         * 处理字节码的开始
+         */
         @Override
         public void visitCode() {
             super.visitCode();
+            // 如果是实例方法，第一个本地遍历表示 this，需要偏移，否则不需要
             int off = (access & Opcodes.ACC_STATIC) != 0 ? 0 : 1;
             Type[] args = Type.getArgumentTypes(desc);
-
+            // 获取方法参数的 总的长度 
             int argRegister = off;
             for (int i = 0; i < args.length; ++i) {
                 argRegister += args[i].getSize();
@@ -185,6 +194,7 @@ public abstract class MethodCallInlinerAdapter extends LocalVariablesSorter {
 
         @Override
         public void visitInsn(int opcode) {
+            // 如果是返回的方法，直接跳转到 end lable 位置，不需要再进行返回
             if (opcode >= Opcodes.IRETURN && opcode <= Opcodes.RETURN) {
                 super.visitJumpInsn(Opcodes.GOTO, end);
             } else {
@@ -213,9 +223,12 @@ public abstract class MethodCallInlinerAdapter extends LocalVariablesSorter {
             // arguments
             super.visitLocalVariable(name, desc, signature, start, end, index + firstLocal);
         }
-
+        /**
+         * 
+         */
         @Override
         public void visitMaxs(int stack, int locals) {
+            //处理方法的结束lable，
             super.visitLabel(end);
         }
 

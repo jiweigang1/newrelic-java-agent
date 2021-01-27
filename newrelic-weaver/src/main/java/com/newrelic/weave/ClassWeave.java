@@ -50,7 +50,13 @@ public class ClassWeave {
         this.weavedMethods = new ArrayList<>(match.getPreparedMatchedMethods().size());
         this.weavePackage = weavePackage;
     }
-
+    /**
+     * 对 class 进行嵌码
+     * @param match  匹配规则
+     * @param target 需要嵌码的 class
+     * @param weavePackage
+     * @return
+     */
     public static ClassWeave weave(PreparedMatch match, ClassNode target, WeavePackage weavePackage) {
         ClassWeave result = new ClassWeave(match, target, weavePackage);
         result.weave();
@@ -59,6 +65,7 @@ public class ClassWeave {
 
     private void weave() {
         weavedMethods.clear();
+        // 复制目标 class 到 composite class node 中，同时去掉 jsr 指令。 jsr 指令作用？
         // copy target to composite without any jsr instructions
         target.accept(new ClassVisitor(WeaveUtils.ASM_API_LEVEL, composite) {
             @Override
@@ -93,6 +100,7 @@ public class ClassWeave {
         MethodNode preparedWeaveAllConstructor = match.getPreparedWeaveAllConstructor();
 
         // weave matched methods
+        // 对匹配的 method 进行嵌入，遍历所有的匹配的规则
         for (MethodNode matchedMethod : match.getPreparedMatchedMethods().values()) {
 
             // If we have a prepared default constructor from an interface or a @WeavesAllConstructor,
@@ -109,12 +117,12 @@ public class ClassWeave {
                 desc = Type.getMethodDescriptor(Type.VOID_TYPE, types);
             }
 
-            // find target
+            // find target  找到匹配到的method
             MethodNode targetMethod = WeaveUtils.findMatch(composite.methods, new Method(matchedMethod.name, desc));
             if (targetMethod == null) {
                 continue; // this can happen when weaving an inherited base class
             }
-
+            // 如果是 桥接的 方法  briage method 
             if ((targetMethod.access & Opcodes.ACC_BRIDGE) != 0) {
                 // instead of weaving the bridge method, weave the method it invokes as long as we aren't already
                 // weaving this method (or going to weave this method).
@@ -132,6 +140,7 @@ public class ClassWeave {
             }
 
             // weave match and target into a composite
+            // 执行方法的嵌码，matchedMethod 嵌入的模板方法，targetMethod 被嵌入的方法
             MethodNode compositeMethod = weaveMethod(matchedMethod, targetMethod);
             if (compositeMethod != null) {
                 MethodNode match = WeaveUtils.findMatch(composite.methods, compositeMethod);
@@ -225,7 +234,12 @@ public class ClassWeave {
 
         return result;
     }
-
+    /**
+     * 执行方法的嵌码操作，
+     * @param weaveMethod
+     * @param targetMethod
+     * @return
+     */
     private MethodNode weaveMethod(final MethodNode weaveMethod, MethodNode targetMethod) {
 
         // disregard weave abstract methods
